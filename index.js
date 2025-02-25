@@ -8,13 +8,31 @@ program
   .description('CLI tool for weather information')
   .version('1.0.0');
 
+function getWeatherEmoji(main, id) {
+  if (main === 'Clear') return '☀️';
+  if (main === 'Clouds') return id === 801 ? '🌤️' : '☁️';
+  if (main === 'Rain') return '🌧️';
+  if (main === 'Drizzle') return '🌦️';
+  if (main === 'Thunderstorm') return '⛈️';
+  if (main === 'Snow') return '❄️';
+  if (main === 'Mist' || main === 'Fog') return '🌫️';
+  return '🌤️';
+}
+
 function displayCurrentWeather(data) {
-  console.log(`\n🌤️  Current weather in ${data.name}, ${data.sys.country}:`);
-  console.log(`Temperature: ${data.main.temp}°C (feels like ${data.main.feels_like}°C)`);
+  const emoji = getWeatherEmoji(data.weather[0].main, data.weather[0].id);
+  const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString();
+  const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString();
+  
+  console.log(`\n${emoji} Current weather in ${data.name}, ${data.sys.country}:`);
+  console.log(`Temperature: ${Math.round(data.main.temp)}°C (feels like ${Math.round(data.main.feels_like)}°C)`);
   console.log(`Condition: ${data.weather[0].description}`);
   console.log(`Humidity: ${data.main.humidity}%`);
   console.log(`Wind: ${data.wind.speed} m/s`);
   console.log(`Pressure: ${data.main.pressure} hPa`);
+  console.log(`Visibility: ${data.visibility ? (data.visibility / 1000).toFixed(1) + ' km' : 'N/A'}`);
+  console.log(`Sunrise: ${sunrise}`);
+  console.log(`Sunset: ${sunset}`);
 }
 
 program
